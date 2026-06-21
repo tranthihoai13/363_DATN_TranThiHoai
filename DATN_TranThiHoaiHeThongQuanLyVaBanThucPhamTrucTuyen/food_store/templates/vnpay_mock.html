@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}VNPAY Demo - FreshMart{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container" style="max-width: 720px;">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-header text-center py-4" style="background-color: #fff; border-radius: 16px 16px 0 0;">
+                <div class="fw-bold fs-4" style="color: #005baa;">
+                    <i class="fas fa-qrcode me-2" style="color: #e31b23;"></i>VNPAY DEMO
+                </div>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-shield-halved fa-3x mb-3" style="color: #2D6A4F;"></i>
+                    <h4 class="fw-bold mb-2" style="color: #2B2D42;">Thanh toán đơn hàng #{{ order.id }}</h4>
+                    <p class="text-muted mb-0">Môi trường giả lập dùng khi chưa có tài khoản sandbox VNPAY thật.</p>
+                </div>
+
+                <div class="bg-light rounded-3 p-3 mb-4">
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Mã giao dịch</span>
+                        <span class="fw-semibold">{{ order.vnpay_txn_ref }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Ngân hàng</span>
+                        <span class="fw-semibold">NCB</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Số tiền</span>
+                        <span class="fw-bold" style="color: #FF6B35;">{{ order.formatted_total }}</span>
+                    </div>
+                </div>
+
+                <form method="POST" class="d-grid gap-2">
+                    <button type="submit" name="action" value="success" class="btn rounded-pill fw-semibold py-2"
+                            style="background-color: #2D6A4F; color: #fff;">
+                        <i class="fas fa-check-circle me-2"></i>Thanh toán thành công
+                    </button>
+                    <button type="submit" name="action" value="fail" class="btn btn-outline-danger rounded-pill fw-semibold py-2">
+                        <i class="fas fa-times-circle me-2"></i>Thanh toán thất bại
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

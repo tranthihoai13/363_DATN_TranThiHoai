@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}Gợi ý sản phẩm - FreshMart{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <!-- Header -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('home') }}" style="color: #2D6A4F;">Trang chủ</a></li>
+                <li class="breadcrumb-item active">Gợi ý sản phẩm</li>
+            </ol>
+        </nav>
+
+        <!-- Banner giới thiệu hệ thống -->
+        <div class="card border-0 shadow-sm mb-4 overflow-hidden"
+             style="background: linear-gradient(135deg, rgba(181,131,141,0.1) 0%, rgba(82,183,136,0.08) 100%); border-radius: 20px;">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2 class="fw-bold mb-2" style="color: #2B2D42;">
+                            <i class="fas fa-wand-magic-sparkles me-2" style="color: #B5838D;"></i>
+                            Hệ thống gợi ý sản phẩm thông minh
+                        </h2>
+                        <p class="text-muted mb-3">
+                            Sử dụng thuật toán <strong>Hybrid Recommendation</strong> kết hợp AI để phân tích sở thích
+                            và hành vi mua sắm, đưa ra gợi ý sản phẩm phù hợp nhất cho bạn.
+                        </p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(45,106,79,0.08); color: #2D6A4F;">
+                                <i class="fas fa-brain me-1"></i>Content-based Filtering
+                            </span>
+                            <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(255,107,53,0.08); color: #FF6B35;">
+                                <i class="fas fa-users me-1"></i>Collaborative Filtering
+                            </span>
+                            <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(181,131,141,0.12); color: #B5838D;">
+                                <i class="fas fa-shuffle me-1"></i>Hybrid Score = α×CF + (1-α)×Content
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center d-none d-lg-block">
+                        <i class="fas fa-robot" style="font-size: 6rem; color: rgba(181,131,141,0.2);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Giải thích thuật toán -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+                    <div class="card-body p-3 text-center">
+                        <div class="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                             style="width: 50px; height: 50px; border-radius: 14px; background-color: rgba(45,106,79,0.08);">
+                            <i class="fas fa-brain" style="color: #2D6A4F;"></i>
+                        </div>
+                        <h6 class="fw-bold" style="color: #2B2D42;">Content-based</h6>
+                        <small class="text-muted">Phân tích nội dung sản phẩm (TF-IDF + Cosine Similarity) để tìm sản phẩm có đặc điểm tương tự với những gì bạn đã mua.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+                    <div class="card-body p-3 text-center">
+                        <div class="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                             style="width: 50px; height: 50px; border-radius: 14px; background-color: rgba(255,107,53,0.08);">
+                            <i class="fas fa-users" style="color: #FF6B35;"></i>
+                        </div>
+                        <h6 class="fw-bold" style="color: #2B2D42;">Collaborative Filtering</h6>
+                        <small class="text-muted">Phân tích hành vi mua sắm của người dùng tương tự để gợi ý sản phẩm mà họ yêu thích nhưng bạn chưa thử.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+                    <div class="card-body p-3 text-center">
+                        <div class="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                             style="width: 50px; height: 50px; border-radius: 14px; background-color: rgba(181,131,141,0.1);">
+                            <i class="fas fa-shuffle" style="color: #B5838D;"></i>
+                        </div>
+                        <h6 class="fw-bold" style="color: #2B2D42;">Hybrid System</h6>
+                        <small class="text-muted">Kết hợp 2 phương pháp trên với trọng số α = 0.5 để tối ưu kết quả. Tự động xử lý Cold Start cho người dùng mới.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if not current_user.is_authenticated %}
+        <!-- Chưa đăng nhập -->
+        <div class="alert border-0 shadow-sm mb-4" style="background-color: rgba(247,178,103,0.1); border-left: 4px solid #F7B267 !important; border-radius: 12px;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-sign-in-alt fa-2x me-3" style="color: #F7B267;"></i>
+                <div>
+                    <h6 class="fw-bold mb-1" style="color: #2B2D42;">Đăng nhập để nhận gợi ý cá nhân hóa!</h6>
+                    <small class="text-muted">Hệ thống sẽ phân tích lịch sử mua hàng để đưa ra gợi ý phù hợp nhất cho bạn.</small>
+                </div>
+                <a href="{{ url_for('login') }}" class="btn btn-sm rounded-pill ms-auto px-3" style="background-color: #FF6B35; color: #fff;">
+                    <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ===== HYBRID RECOMMENDATIONS ===== -->
+        {% if hybrid_products %}
+        <div class="mb-5">
+            <div class="d-flex align-items-center mb-3">
+                <div class="section-bar me-3" style="background: linear-gradient(180deg, #B5838D, #D4A373);"></div>
+                <div>
+                    <h4 class="fw-bold mb-0" style="color: #2B2D42;">
+                        <i class="fas fa-star me-2" style="color: #B5838D;"></i>Gợi ý Hybrid cho {{ current_user.full_name or current_user.username }}
+                    </h4>
+                    <small class="text-muted">Score = α × Collaborative + (1-α) × Content-based</small>
+                </div>
+            </div>
+            <div class="row g-3">
+                {% for product in hybrid_products %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 start-0 m-2 badge rounded-pill shadow-sm" style="background-color: #B5838D; z-index: 2; font-size: 0.65rem;">
+                            <i class="fas fa-sparkles me-1"></i>{{ hybrid_scores[loop.index0] }}% phù hợp
+                        </span>
+                        {% include '_product_card.html' %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ===== CONTENT-BASED: Tương tự SP đã mua ===== -->
+        {% if content_products and last_bought_product %}
+        <div class="mb-5">
+            <div class="d-flex align-items-center mb-3">
+                <div class="section-bar me-3" style="background: linear-gradient(180deg, #2D6A4F, #52B788);"></div>
+                <div>
+                    <h4 class="fw-bold mb-0" style="color: #2B2D42;">
+                        <i class="fas fa-brain me-2" style="color: #2D6A4F;"></i>Tương tự "{{ last_bought_product.name }}"
+                    </h4>
+                    <small class="text-muted">Content-based: TF-IDF Vectorizer + Cosine Similarity</small>
+                </div>
+            </div>
+            <div class="row g-3">
+                {% for product in content_products %}
+                <div class="col-6 col-md-3">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 start-0 m-2 badge rounded-pill shadow-sm" style="background-color: #2D6A4F; z-index: 2; font-size: 0.65rem;">
+                            <i class="fas fa-brain me-1"></i>Content-based
+                        </span>
+                        {% include '_product_card.html' %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ===== DANH MỤC YÊU THÍCH ===== -->
+        {% if fav_category_products and fav_category_name %}
+        <div class="mb-5">
+            <div class="d-flex align-items-center mb-3">
+                <div class="section-bar me-3" style="background: linear-gradient(180deg, #F7B267, #D4A373);"></div>
+                <div>
+                    <h4 class="fw-bold mb-0" style="color: #2B2D42;">
+                        <i class="fas fa-heart me-2" style="color: #F7B267;"></i>Danh mục yêu thích: {{ fav_category_name }}
+                    </h4>
+                    <small class="text-muted">Dựa trên lịch sử mua hàng của bạn</small>
+                </div>
+            </div>
+            <div class="row g-3">
+                {% for product in fav_category_products %}
+                <div class="col-6 col-md-3">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 start-0 m-2 badge rounded-pill shadow-sm" style="background-color: #F7B267; z-index: 2; font-size: 0.65rem;">
+                            <i class="fas fa-heart me-1"></i>{{ fav_category_name }}
+                        </span>
+                        {% include '_product_card.html' %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ===== TOP TRENDING (Fallback) ===== -->
+        {% if trending_products %}
+        <div class="mb-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="section-bar me-3" style="background: linear-gradient(180deg, #FF6B35, #F7B267);"></div>
+                <div>
+                    <h4 class="fw-bold mb-0" style="color: #2B2D42;">
+                        <i class="fas fa-fire me-2" style="color: #FF6B35;"></i>Xu hướng mua sắm
+                    </h4>
+                    <small class="text-muted">Top sản phẩm bán chạy nhất (Fallback khi Cold Start)</small>
+                </div>
+            </div>
+            <div class="row g-3">
+                {% for product in trending_products %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 start-0 m-2 badge rounded-pill shadow-sm" style="background-color: #FF6B35; z-index: 2; font-size: 0.65rem;">
+                            <i class="fas fa-fire me-1"></i>Trending
+                        </span>
+                        {% include '_product_card.html' %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

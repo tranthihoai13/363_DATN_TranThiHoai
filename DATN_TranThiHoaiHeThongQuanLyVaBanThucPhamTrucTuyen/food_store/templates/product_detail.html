@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - FreshMart{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('home') }}" style="color: #2D6A4F;">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('shop') }}" style="color: #2D6A4F;">Cửa hàng</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('shop', category=product.category_id) }}" style="color: #2D6A4F;">{{ product.category.name }}</a></li>
+                <li class="breadcrumb-item active">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- ẢNH SẢN PHẨM -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 20px;">
+                    <img src="{{ url_for('static', filename='uploads/' + (product.image or 'default_food.png')) }}"
+                         class="w-100" style="height: 400px; object-fit: cover;"
+                         alt="{{ product.name }}"
+                         onerror="this.src='https://via.placeholder.com/500x400/2D6A4F/fff?text={{ product.name[:10] }}'">
+                </div>
+            </div>
+
+            <!-- THÔNG TIN SẢN PHẨM -->
+            <div class="col-lg-7">
+                <span class="badge rounded-pill mb-2" style="background-color: rgba(82,183,136,0.12); color: #2D6A4F;">
+                    <i class="fas {{ product.category.icon or 'fa-tag' }} me-1"></i>{{ product.category.name }}
+                </span>
+                <h2 class="fw-bold mb-2" style="color: #2B2D42;">{{ product.name }}</h2>
+
+                <div class="d-flex align-items-center mb-3">
+                    <span class="fs-3 fw-bold me-3" style="color: #FF6B35;">{{ product.formatted_price }}</span>
+                    <span class="text-muted">/{{ product.unit }}</span>
+                </div>
+
+                <div class="mb-3">
+                    {% if product.stock > 0 %}
+                    <span class="badge rounded-pill" style="background-color: rgba(82,183,136,0.15); color: #2D6A4F;">
+                        <i class="fas fa-check-circle me-1"></i>Còn hàng ({{ product.stock }} {{ product.unit }})
+                    </span>
+                    {% else %}
+                    <span class="badge rounded-pill bg-secondary">
+                        <i class="fas fa-times-circle me-1"></i>Hết hàng
+                    </span>
+                    {% endif %}
+                    <span class="badge rounded-pill ms-2" style="background-color: rgba(181,131,141,0.12); color: #B5838D;">
+                        <i class="fas fa-shopping-bag me-1"></i>Đã bán {{ product.total_sold }}
+                    </span>
+                </div>
+
+                <p class="text-muted mb-4" style="line-height: 1.8;">{{ product.description }}</p>
+
+                <!-- Form thêm vào giỏ -->
+                {% if product.stock > 0 %}
+                <form action="{{ url_for('cart_add') }}" method="POST">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <label class="fw-semibold">Số lượng:</label>
+                        <div class="input-group" style="width: 140px;">
+                            <button type="button" class="btn btn-outline-secondary qty-btn" data-action="minus">−</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}"
+                                   class="form-control text-center qty-input" id="qty">
+                            <button type="button" class="btn btn-outline-secondary qty-btn" data-action="plus">+</button>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-lg rounded-pill px-4 fw-semibold shadow-sm"
+                                style="background-color: #FF6B35; color: #fff; border: none;">
+                            <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ hàng
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+
+                <!-- Thông tin thêm -->
+                <div class="mt-4 p-3" style="background-color: rgba(82,183,136,0.06); border: 1.5px solid rgba(82,183,136,0.15); border-radius: 16px;">
+                    <div class="row text-center small">
+                        <div class="col-4">
+                            <i class="fas fa-truck mb-1" style="color: #52B788;"></i><br>
+                            <span class="text-muted">Giao hàng nhanh</span>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-shield-halved mb-1" style="color: #52B788;"></i><br>
+                            <span class="text-muted">Đảm bảo chất lượng</span>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-rotate-left mb-1" style="color: #52B788;"></i><br>
+                            <span class="text-muted">Đổi trả dễ dàng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SẢN PHẨM TƯƠNG TỰ (Content-based Recommendation) -->
+        {% if similar_products %}
+        <div class="mt-5">
+            <div class="d-flex align-items-center mb-4">
+                <div class="section-bar me-3" style="background: linear-gradient(180deg, #B5838D, #D4A373);"></div>
+                <h4 class="fw-bold mb-0" style="color: #2B2D42;">
+                    <i class="fas fa-wand-magic-sparkles me-2" style="color: #B5838D;"></i>Sản phẩm tương tự
+                </h4>
+            </div>
+            <div class="row g-3">
+                {% for product in similar_products %}
+                <div class="col-6 col-md-3">
+                    {% include '_product_card.html' %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Nút tăng giảm số lượng
+document.querySelectorAll('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const input = document.getElementById('qty');
+        let val = parseInt(input.value) || 1;
+        if (this.dataset.action === 'plus') {
+            val = Math.min(val + 1, parseInt(input.max));
+        } else {
+            val = Math.max(val - 1, 1);
+        }
+        input.value = val;
+    });
+});
+</script>
+{% endblock %}

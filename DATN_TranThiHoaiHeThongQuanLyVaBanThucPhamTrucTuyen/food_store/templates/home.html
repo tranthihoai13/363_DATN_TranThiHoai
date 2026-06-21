@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block title %}FreshMart - Trang chủ{% endblock %}
+
+{% block content %}
+<!-- ==================== HERO BANNER ==================== -->
+<section class="hero-banner position-relative overflow-hidden" style="background: linear-gradient(135deg, #2D6A4F 0%, #1B4332 100%);">
+    <div class="container py-5">
+        <div class="row align-items-center min-vh-40">
+            <div class="col-lg-6 text-white py-5">
+                <span class="badge rounded-pill mb-3 px-3 py-2" style="background-color: rgba(82,183,136,0.25); color: #95D5B2; font-size: 0.85rem;">
+                    <i class="fas fa-leaf me-1"></i> Tươi ngon mỗi ngày
+                </span>
+                <h1 class="display-4 fw-bold mb-3" style="line-height: 1.15;">Thực phẩm tươi ngon<br>giao tận nhà</h1>
+                <p class="fs-5 mb-4" style="color: rgba(255,255,255,0.8);">
+                    Chọn lọc từ nguồn cung uy tín, giao tận nhà trong 2 giờ. Cam kết chất lượng, đổi trả dễ dàng.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{{ url_for('shop') }}" class="btn btn-lg rounded-pill px-4 fw-semibold shadow-sm"
+                       style="background-color: #FF6B35; color: #fff; border: none;">
+                        <i class="fas fa-shopping-bag me-2"></i>Mua sắm ngay
+                    </a>
+                    <a href="{{ url_for('recommendations_page') }}" class="btn btn-lg rounded-pill px-4 fw-semibold"
+                       style="background-color: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.4);">
+                        <i class="fas fa-wand-magic-sparkles me-2"></i>Gợi ý AI
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center py-4">
+                <i class="fas fa-basket-shopping" style="font-size: 12rem; color: rgba(255,255,255,0.08);"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== DANH MỤC THỰC PHẨM ==================== -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold" style="color: var(--text);">Danh mục thực phẩm</h2>
+            <p class="text-muted">Khám phá các loại thực phẩm đa dạng</p>
+        </div>
+        <div class="row g-3">
+            {% for cat in categories %}
+            <div class="col-6 col-md-3">
+                <a href="{{ url_for('shop', category=cat.id) }}" class="text-decoration-none">
+                    <div class="card border-0 shadow-sm h-100 category-card text-center p-3" style="border-radius: 16px;">
+                        <div class="mb-2 d-flex justify-content-center align-items-center mx-auto"
+                             style="width: 52px; height: 52px; border-radius: 14px; background-color: rgba(82,183,136,0.1);">
+                            <i class="fas {{ cat.icon or 'fa-utensils' }} fa-lg" style="color: #2D6A4F;"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-0" style="color: var(--text);">{{ cat.name }}</h6>
+                        <small class="text-muted">{{ cat.products.count() }} sản phẩm</small>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ==================== GỢI Ý RIÊNG CHO BẠN (RECOMMENDATION) ==================== -->
+{% if recommended_products %}
+<section class="py-5" style="background-color: #FEFAE0;">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center">
+                <div class="section-bar me-3" style="background: linear-gradient(180deg, #B5838D, #D4A373);"></div>
+                <div>
+                    <h3 class="fw-bold mb-0" style="color: var(--text);">
+                        <i class="fas fa-wand-magic-sparkles me-2" style="color: #B5838D;"></i>
+                        {% if current_user.is_authenticated %}Gợi ý riêng cho bạn{% else %}Có thể bạn sẽ thích{% endif %}
+                    </h3>
+                    <small class="text-muted">
+                        <i class="fas fa-robot me-1"></i>Hệ thống gợi ý thông minh (Hybrid AI) 
+                        {% if current_user.is_authenticated %} · Cá nhân hóa cho {{ current_user.full_name or current_user.username }}{% endif %}
+                    </small>
+                </div>
+            </div>
+            <a href="{{ url_for('recommendations_page') }}" class="btn btn-sm rounded-pill px-3"
+               style="background-color: rgba(181,131,141,0.1); color: #B5838D; border: 1.5px solid #B5838D;">
+                Xem thêm <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <!-- Badge giải thích -->
+        <div class="mb-3">
+            <span class="badge rounded-pill me-2" style="background-color: rgba(45,106,79,0.08); color: #2D6A4F; font-size: 0.75rem;">
+                <i class="fas fa-brain me-1"></i>Content-based
+            </span>
+            <span class="badge rounded-pill me-2" style="background-color: rgba(255,107,53,0.08); color: #FF6B35; font-size: 0.75rem;">
+                <i class="fas fa-users me-1"></i>Collaborative
+            </span>
+            <span class="badge rounded-pill" style="background-color: rgba(181,131,141,0.1); color: #B5838D; font-size: 0.75rem;">
+                <i class="fas fa-shuffle me-1"></i>Hybrid
+            </span>
+        </div>
+        <div class="row g-3">
+            {% for product in recommended_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="position-relative">
+                    <span class="position-absolute top-0 start-0 m-2 badge rounded-pill shadow-sm" style="background-color: #B5838D; z-index: 2; font-size: 0.7rem;">
+                        <i class="fas fa-sparkles me-1"></i>AI Gợi ý
+                    </span>
+                    {% include '_product_card.html' %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ==================== SẢN PHẨM BÁN CHẠY ==================== -->
+{% if trending_products %}
+<section class="py-5" style="background-color: rgba(82,183,136,0.05);">
+    <div class="container">
+        <div class="d-flex align-items-center mb-4">
+            <div class="section-bar me-3" style="background: linear-gradient(180deg, #FF6B35, #F7B267);"></div>
+            <div>
+                <h3 class="fw-bold mb-0" style="color: var(--text);">
+                    <i class="fas fa-fire me-2" style="color: #FF6B35;"></i>Bán chạy nhất
+                </h3>
+                <small class="text-muted">Sản phẩm được yêu thích nhất tuần</small>
+            </div>
+        </div>
+        <div class="row g-3">
+            {% for product in trending_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                {% include '_product_card.html' %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ==================== SẢN PHẨM MỚI ==================== -->
+{% if new_products %}
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex align-items-center mb-4">
+            <div class="section-bar me-3" style="background: linear-gradient(180deg, #52B788, #95D5B2);"></div>
+            <div>
+                <h3 class="fw-bold mb-0" style="color: var(--text);">
+                    <i class="fas fa-sparkles me-2" style="color: #52B788;"></i>Sản phẩm mới
+                </h3>
+                <small class="text-muted">Vừa cập nhật</small>
+            </div>
+        </div>
+        <div class="row g-3">
+            {% for product in new_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                {% include '_product_card.html' %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('shop') }}" class="btn rounded-pill px-4 fw-semibold" style="background-color: #2D6A4F; color: #fff;">
+                Xem tất cả <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

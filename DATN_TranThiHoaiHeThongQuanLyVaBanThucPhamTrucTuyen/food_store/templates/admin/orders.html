@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}Quản lý đơn hàng - Admin{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0" style="color: #2B2D42;">
+                <i class="fas fa-receipt me-2" style="color: #2D6A4F;"></i>Quản lý đơn hàng
+            </h2>
+            <!-- Bộ lọc trạng thái -->
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('admin_orders') }}"
+                   class="btn btn-sm rounded-pill px-3 {% if not status_filter %}fw-bold{% endif %}"
+                   style="{% if not status_filter %}background-color: #2D6A4F; color: #fff;{% else %}background-color: #f0f0f0; color: #333;{% endif %}">
+                    Tất cả
+                </a>
+                {% set filters = [('pending_payment', 'Chờ thanh toán', '#6c757d'), ('pending', 'Chờ xử lý', '#F7B267'), ('confirmed', 'Đã xác nhận', '#2D6A4F'), ('shipping', 'Đang giao', '#B5838D'), ('completed', 'Hoàn thành', '#52B788'), ('cancelled', 'Đã hủy', '#dc3545')] %}
+                {% for val, label, color in filters %}
+                <a href="{{ url_for('admin_orders', status=val) }}"
+                   class="btn btn-sm rounded-pill px-3 {% if status_filter == val %}fw-bold{% endif %}"
+                   style="{% if status_filter == val %}background-color: {{ color }}; color: #fff;{% else %}background-color: #f0f0f0; color: #333;{% endif %}">
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead style="background-color: rgba(45,106,79,0.04);">
+                            <tr>
+                                <th class="ps-4">Mã ĐH</th>
+                                <th>Khách hàng</th>
+                                <th>SĐT</th>
+                                <th>Sản phẩm</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày đặt</th>
+                                <th class="text-center pe-4">Cập nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders.items %}
+                            <tr>
+                                <td class="ps-4 fw-semibold">#{{ order.id }}</td>
+                                <td>
+                                    <span class="fw-semibold">{{ order.shipping_name or order.user.full_name }}</span>
+                                    <br><small class="text-muted">{{ order.user.username }}</small>
+                                </td>
+                                <td class="small">{{ order.shipping_phone }}</td>
+                                <td>
+                                    {% for item in order.items[:2] %}
+                                    <small>{{ item.product.name }} x{{ item.quantity }}</small><br>
+                                    {% endfor %}
+                                    {% if order.items|length > 2 %}
+                                    <small class="text-muted">+{{ order.items|length - 2 }} sản phẩm khác</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span style="color: #FF6B35; font-weight: 600;">{{ order.formatted_total }}</span>
+                                    <br><small class="text-muted">{{ order.payment_method_label }}</small>
+                                </td>
+                                <td>
+                                    {% set status_colors = {'pending_payment': '#6c757d', 'pending': '#F7B267', 'confirmed': '#2D6A4F', 'shipping': '#B5838D', 'completed': '#52B788', 'cancelled': '#dc3545'} %}
+                                    {% set payment_colors = {'unpaid': '#6c757d', 'pending': '#F7B267', 'paid': '#52B788', 'failed': '#dc3545'} %}
+                                    <span class="badge rounded-pill" style="background-color: {{ status_colors.get(order.status, '#6c757d') }};">
+                                        {{ order.status_label }}
+                                    </span>
+                                    <br>
+                                    <span class="badge rounded-pill mt-1" style="background-color: {{ payment_colors.get(order.payment_status, '#6c757d') }};">
+                                        {{ order.payment_status_label }}
+                                    </span>
+                                </td>
+                                <td class="small text-muted">{{ order.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td class="text-center pe-4">
+                                    <form action="{{ url_for('admin_order_update', order_id=order.id) }}" method="POST" class="d-flex gap-1 justify-content-center">
+                                        <select name="status" class="form-select form-select-sm rounded-3" style="width: 130px;">
+                                            {% for val, label in order.STATUS_CHOICES.items() %}
+                                            <option value="{{ val }}" {% if order.status == val %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="btn btn-sm rounded-pill"
+                                                style="background-color: #2D6A4F; color: #fff;">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if orders.pages > 1 %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if orders.has_prev %}
+                <li class="page-item">
+                    <a class="page-link rounded-3" href="{{ url_for('admin_orders', page=orders.prev_num, status=status_filter) }}">&laquo;</a>
+                </li>
+                {% endif %}
+                {% for p in orders.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if p %}
+                    <li class="page-item {% if p == orders.page %}active{% endif %}">
+                        <a class="page-link rounded-3" href="{{ url_for('admin_orders', page=p, status=status_filter) }}"
+                           {% if p == orders.page %}style="background-color: #2D6A4F; border-color: #2D6A4F;"{% endif %}>{{ p }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link rounded-3">…</span></li>
+                    {% endif %}
+                {% endfor %}
+                {% if orders.has_next %}
+                <li class="page-item">
+                    <a class="page-link rounded-3" href="{{ url_for('admin_orders', page=orders.next_num, status=status_filter) }}">&raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

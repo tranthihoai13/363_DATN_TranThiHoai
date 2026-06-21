@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block title %}Cửa hàng - FreshMart{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('home') }}" style="color: #2D6A4F;">Trang chủ</a></li>
+                <li class="breadcrumb-item active">Cửa hàng</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- SIDEBAR: Bộ lọc -->
+            <div class="col-lg-3 mb-4">
+                <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3" style="color: #2D6A4F;">
+                            <i class="fas fa-filter me-2"></i>Bộ lọc
+                        </h5>
+
+                        <!-- Danh mục -->
+                        <h6 class="fw-semibold mb-2">Danh mục</h6>
+                        <div class="list-group list-group-flush mb-3">
+                            <a href="{{ url_for('shop', q=search, sort=sort) }}"
+                               class="list-group-item list-group-item-action border-0 rounded-3 {% if not category_id %}fw-bold{% endif %}"
+                               {% if not category_id %}style="background-color: rgba(82,183,136,0.1); color: #2D6A4F;"{% endif %}>
+                                Tất cả
+                            </a>
+                            {% for cat in all_categories %}
+                            <a href="{{ url_for('shop', category=cat.id, q=search, sort=sort) }}"
+                               class="list-group-item list-group-item-action border-0 rounded-3 {% if category_id == cat.id %}fw-bold{% endif %}"
+                               {% if category_id == cat.id %}style="background-color: rgba(82,183,136,0.1); color: #2D6A4F;"{% endif %}>
+                                <i class="fas {{ cat.icon or 'fa-tag' }} me-2" style="color: #52B788;"></i>{{ cat.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Sắp xếp -->
+                        <h6 class="fw-semibold mb-2">Sắp xếp</h6>
+                        <div class="list-group list-group-flush">
+                            {% set sort_options = [('newest', 'Mới nhất'), ('price_asc', 'Giá thấp → cao'), ('price_desc', 'Giá cao → thấp'), ('bestseller', 'Bán chạy nhất')] %}
+                            {% for val, label in sort_options %}
+                            <a href="{{ url_for('shop', category=category_id, q=search, sort=val) }}"
+                               class="list-group-item list-group-item-action border-0 rounded-3 small {% if sort == val %}fw-bold{% endif %}"
+                               {% if sort == val %}style="color: #FF6B35;"{% endif %}>
+                                {{ label }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GỢI Ý SẢN PHẨM (Recommendation sidebar) -->
+                {% if recommended_products %}
+                <div class="card border-0 shadow-sm mt-3" style="border-radius: 16px;">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3" style="color: #B5838D;">
+                            <i class="fas fa-wand-magic-sparkles me-2"></i>Gợi ý cho bạn
+                        </h6>
+                        <small class="text-muted d-block mb-3">
+                            <i class="fas fa-robot me-1"></i>AI Recommendation
+                        </small>
+                        {% for product in recommended_products %}
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="text-decoration-none">
+                            <div class="d-flex align-items-center {% if not loop.last %}mb-3 pb-2 border-bottom{% endif %}">
+                                <img src="{{ url_for('static', filename='uploads/' + (product.image or 'default_food.png')) }}"
+                                     class="me-2" style="width: 50px; height: 50px; object-fit: cover; border-radius: 10px;"
+                                     onerror="this.src='https://via.placeholder.com/50x50/2D6A4F/fff?text=🍎'">
+                                <div class="flex-grow-1">
+                                    <small class="fw-semibold d-block text-truncate" style="color: #2B2D42; max-width: 140px;">{{ product.name }}</small>
+                                    <small class="fw-bold" style="color: #FF6B35;">{{ product.formatted_price }}</small>
+                                </div>
+                                <span class="badge rounded-pill" style="background-color: rgba(181,131,141,0.1); color: #B5838D; font-size: 0.6rem;">
+                                    <i class="fas fa-sparkles"></i>
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                        <a href="{{ url_for('recommendations_page') }}" class="btn btn-sm w-100 rounded-pill mt-2"
+                           style="background-color: rgba(181,131,141,0.08); color: #B5838D; border: 1.5px solid rgba(181,131,141,0.3);">
+                            Xem tất cả gợi ý <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- SẢN PHẨM -->
+            <div class="col-lg-9">
+                {% if search %}
+                <div class="alert rounded-3 mb-3" style="background-color: rgba(247,178,103,0.1); border-left: 4px solid #F7B267; color: #2B2D42;">
+                    <i class="fas fa-search me-2" style="color: #F7B267;"></i>
+                    Kết quả tìm kiếm cho "<strong>{{ search }}</strong>" ({{ products.total }} sản phẩm)
+                </div>
+                {% endif %}
+
+                {% if products.items %}
+                <div class="row g-3">
+                    {% for product in products.items %}
+                    <div class="col-6 col-md-4">
+                        {% include '_product_card.html' %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if products.pages > 1 %}
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if products.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link rounded-3" href="{{ url_for('shop', page=products.prev_num, category=category_id, q=search, sort=sort) }}">&laquo;</a>
+                        </li>
+                        {% endif %}
+                        {% for p in products.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if p %}
+                            <li class="page-item {% if p == products.page %}active{% endif %}">
+                                <a class="page-link rounded-3" href="{{ url_for('shop', page=p, category=category_id, q=search, sort=sort) }}"
+                                   {% if p == products.page %}style="background-color: #2D6A4F; border-color: #2D6A4F;"{% endif %}>{{ p }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link rounded-3">…</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if products.has_next %}
+                        <li class="page-item">
+                            <a class="page-link rounded-3" href="{{ url_for('shop', page=products.next_num, category=category_id, q=search, sort=sort) }}">&raquo;</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-4x mb-3" style="color: #D4A373;"></i>
+                    <h5 class="text-muted">Không tìm thấy sản phẩm nào</h5>
+                    <a href="{{ url_for('shop') }}" class="btn rounded-pill mt-3" style="background-color: #2D6A4F; color: #fff;">
+                        Xem tất cả sản phẩm
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

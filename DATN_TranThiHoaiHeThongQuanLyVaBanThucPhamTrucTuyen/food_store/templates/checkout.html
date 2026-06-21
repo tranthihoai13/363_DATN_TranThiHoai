@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Thanh toán - FreshMart{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h2 class="fw-bold mb-4" style="color: #2B2D42;">
+            <i class="fas fa-credit-card me-2" style="color: #2D6A4F;"></i>Thanh toán
+        </h2>
+
+        <form method="POST">
+            <div class="row g-4">
+                <!-- THÔNG TIN GIAO HÀNG -->
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-3" style="color: #2D6A4F;">
+                                <i class="fas fa-truck me-2"></i>Thông tin giao hàng
+                            </h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Họ tên người nhận <span class="text-danger">*</span></label>
+                                <input type="text" name="shipping_name" class="form-control"
+                                       value="{{ current_user.full_name or '' }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                                <input type="tel" name="shipping_phone" class="form-control"
+                                       value="{{ current_user.phone or '' }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                                <textarea name="shipping_address" class="form-control" rows="3" required>{{ current_user.address or '' }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Ghi chú đơn hàng</label>
+                                <textarea name="note" class="form-control" rows="2" placeholder="VD: Giao giờ hành chính, gọi trước khi giao..."></textarea>
+                            </div>
+                            <hr>
+                            <h5 class="fw-bold mb-3" style="color: #2D6A4F;">
+                                <i class="fas fa-wallet me-2"></i>Phương thức thanh toán
+                            </h5>
+                            <div class="vstack gap-2">
+                                <label class="border rounded-3 p-3 d-flex align-items-start gap-3">
+                                    <input class="form-check-input mt-1" type="radio" name="payment_method" value="cod" checked>
+                                    <span>
+                                        <span class="fw-semibold d-block">Thanh toán khi nhận hàng</span>
+                                        <small class="text-muted">Nhân viên xác nhận và thu tiền khi giao hàng.</small>
+                                    </span>
+                                </label>
+                                <label class="border rounded-3 p-3 d-flex align-items-start gap-3">
+                                    <input class="form-check-input mt-1" type="radio" name="payment_method" value="vnpay">
+                                    <span class="w-100">
+                                        <span class="fw-semibold d-block">Thanh toán qua VNPAY</span>
+                                        <small class="text-muted">Chuyển sang cổng VNPAY để thanh toán bằng QR, ATM nội địa hoặc thẻ quốc tế.</small>
+                                        <select name="vnpay_bank_code" class="form-select form-select-sm mt-2">
+                                            <option value="">Để khách chọn trên VNPAY</option>
+                                            <option value="VNPAYQR">VNPAY QR</option>
+                                            <option value="VNBANK">ATM / tài khoản ngân hàng nội địa</option>
+                                            <option value="INTCARD">Thẻ quốc tế</option>
+                                        </select>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TÓM TẮT ĐƠN HÀNG -->
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-3" style="color: #2B2D42;">
+                                <i class="fas fa-receipt me-2" style="color: #F7B267;"></i>Đơn hàng của bạn
+                            </h5>
+                            {% for item in items %}
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                <div>
+                                    <span class="fw-semibold small">{{ item.product.name }}</span>
+                                    <br><small class="text-muted">x{{ item.quantity }}</small>
+                                </div>
+                                <span class="fw-semibold small" style="color: #FF6B35;">{{ "{:,.0f}đ".format(item.subtotal).replace(",", ".") }}</span>
+                            </div>
+                            {% endfor %}
+                            <hr>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Tạm tính:</span>
+                                <span>{{ "{:,.0f}đ".format(total).replace(",", ".") }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Phí giao hàng:</span>
+                                <span style="color: #52B788;">Miễn phí</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-4">
+                                <span class="fw-bold fs-5">Tổng cộng:</span>
+                                <span class="fw-bold fs-5" style="color: #FF6B35;">{{ "{:,.0f}đ".format(total).replace(",", ".") }}</span>
+                            </div>
+                            <button type="submit" class="btn w-100 rounded-pill fw-semibold py-2"
+                                    style="background-color: #2D6A4F; color: #fff; border: none; font-size: 1.05rem;">
+                                <i class="fas fa-check-circle me-2"></i>Xác nhận đặt hàng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

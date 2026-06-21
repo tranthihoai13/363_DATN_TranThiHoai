@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}Giỏ hàng - FreshMart{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h2 class="fw-bold mb-4" style="color: #2B2D42;">
+            <i class="fas fa-shopping-cart me-2" style="color: #2D6A4F;"></i>Giỏ hàng của bạn
+        </h2>
+
+        {% if items %}
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead style="background-color: rgba(45,106,79,0.05);">
+                                    <tr>
+                                        <th class="ps-4 py-3">Sản phẩm</th>
+                                        <th class="py-3 text-center">Đơn giá</th>
+                                        <th class="py-3 text-center">Số lượng</th>
+                                        <th class="py-3 text-center">Thành tiền</th>
+                                        <th class="py-3 text-center pe-4">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in items %}
+                                    <tr>
+                                        <td class="ps-4 py-3">
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('static', filename='uploads/' + (item.product.image or 'default_food.png')) }}"
+                                                     class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px;"
+                                                     onerror="this.src='https://via.placeholder.com/60x60/2D6A4F/fff?text=Food'">
+                                                <div>
+                                                    <a href="{{ url_for('product_detail', product_id=item.product.id) }}"
+                                                       class="fw-semibold text-decoration-none" style="color: #2B2D42;">{{ item.product.name }}</a>
+                                                    <br><small class="text-muted">{{ item.product.category.name }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style="color: #FF6B35; font-weight: 600;">{{ item.product.formatted_price }}</td>
+                                        <td class="text-center">
+                                            <form action="{{ url_for('cart_update') }}" method="POST" class="d-inline">
+                                                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                                                <div class="input-group input-group-sm" style="width: 110px; margin: 0 auto;">
+                                                    <button type="submit" name="quantity" value="{{ item.quantity - 1 }}"
+                                                            class="btn btn-outline-secondary">−</button>
+                                                    <input type="text" class="form-control text-center" value="{{ item.quantity }}" readonly>
+                                                    <button type="submit" name="quantity" value="{{ item.quantity + 1 }}"
+                                                            class="btn btn-outline-secondary">+</button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                        <td class="text-center fw-bold" style="color: #2B2D42;">{{ "{:,.0f}đ".format(item.subtotal).replace(",", ".") }}</td>
+                                        <td class="text-center pe-4">
+                                            <a href="{{ url_for('cart_remove', product_id=item.product.id) }}"
+                                               class="btn btn-sm btn-outline-danger rounded-pill">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TỔNG ĐƠN HÀNG -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3" style="color: #2B2D42;">Tổng đơn hàng</h5>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Tạm tính:</span>
+                            <span class="fw-semibold">{{ "{:,.0f}đ".format(total).replace(",", ".") }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Phí giao hàng:</span>
+                            <span class="fw-semibold" style="color: #52B788;">Miễn phí</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fw-bold fs-5">Tổng cộng:</span>
+                            <span class="fw-bold fs-5" style="color: #FF6B35;">{{ "{:,.0f}đ".format(total).replace(",", ".") }}</span>
+                        </div>
+                        <a href="{{ url_for('checkout') }}" class="btn w-100 rounded-pill fw-semibold py-2"
+                           style="background-color: #2D6A4F; color: #fff; border: none;">
+                            <i class="fas fa-credit-card me-2"></i>Tiến hành thanh toán
+                        </a>
+                        <a href="{{ url_for('shop') }}" class="btn btn-outline-secondary w-100 rounded-pill mt-2">
+                            <i class="fas fa-arrow-left me-2"></i>Tiếp tục mua sắm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GỢI Ý SẢN PHẨM (Dựa trên giỏ hàng) -->
+        {% if suggested_products %}
+        <div class="mt-5">
+            <div class="d-flex align-items-center mb-3">
+                <div class="section-bar me-3" style="background: linear-gradient(180deg, #B5838D, #D4A373);"></div>
+                <div>
+                    <h5 class="fw-bold mb-0" style="color: #2B2D42;">
+                        <i class="fas fa-wand-magic-sparkles me-2" style="color: #B5838D;"></i>Bạn cũng có thể thích
+                    </h5>
+                    <small class="text-muted"><i class="fas fa-robot me-1"></i>Gợi ý dựa trên sản phẩm trong giỏ hàng (Content-based AI)</small>
+                </div>
+            </div>
+            <div class="row g-3">
+                {% for product in suggested_products %}
+                <div class="col-6 col-md-3">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 start-0 m-2 badge rounded-pill shadow-sm" style="background-color: #B5838D; z-index: 2; font-size: 0.65rem;">
+                            <i class="fas fa-sparkles me-1"></i>Gợi ý
+                        </span>
+                        {% include '_product_card.html' %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-4x mb-3" style="color: #D4A373;"></i>
+            <h4 class="text-muted mb-3">Giỏ hàng trống</h4>
+            <p class="text-muted">Hãy thêm sản phẩm yêu thích vào giỏ hàng!</p>
+            <a href="{{ url_for('shop') }}" class="btn rounded-pill px-4" style="background-color: #FF6B35; color: #fff;">
+                <i class="fas fa-shopping-bag me-2"></i>Mua sắm ngay
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

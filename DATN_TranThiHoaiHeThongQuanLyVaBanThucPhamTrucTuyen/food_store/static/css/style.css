@@ -1,0 +1,396 @@
+/*
+  style.css - Custom CSS cho FreshMart
+  =====================================
+  Bảng màu mới (Warm Natural Harmony):
+    --primary:   #2D6A4F - Xanh lá đậm (navbar, footer, CTA chính)
+    --secondary: #52B788 - Xanh lá tươi (hover, badge, accent)
+    --accent:    #FF6B35 - Cam ấm (giá, nút giỏ hàng, highlight)
+    --warm:      #F7B267 - Vàng cam nhạt (banner, icon)
+    --soft:      #D4A373 - Nâu ấm (border, tag phụ)
+    --rose:      #B5838D - Hồng đất (AI badge, highlight phụ)
+    --bg:        #FEFAE0 - Kem nhạt (background sections)
+    --bg-light:  #F8F9FA - Xám sáng (background chung)
+    --text:      #2B2D42 - Xám đậm (chữ chính)
+    --muted:     #6C757D - Xám (chữ phụ)
+*/
+
+/* ==================== GLOBAL ==================== */
+:root {
+    --primary: #2D6A4F;
+    --secondary: #52B788;
+    --accent: #FF6B35;
+    --warm: #F7B267;
+    --soft: #D4A373;
+    --rose: #B5838D;
+    --bg: #FEFAE0;
+    --bg-light: #F8F9FA;
+    --text: #2B2D42;
+    --muted: #6C757D;
+    --white: #FFFFFF;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-pill: 50px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--text);
+    background-color: var(--bg-light);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    transition: color 0.2s ease;
+}
+
+/* ==================== NAVBAR ==================== */
+.navbar {
+    box-shadow: 0 1px 20px rgba(45,106,79,0.12);
+    padding: 0.6rem 0;
+    backdrop-filter: blur(10px);
+}
+
+.navbar-brand {
+    font-size: 1.35rem;
+    letter-spacing: -0.3px;
+}
+
+.navbar .nav-link {
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.85rem !important;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.navbar .nav-link:hover {
+    background-color: rgba(255,255,255,0.12);
+}
+
+.navbar .input-group .form-control {
+    border: none;
+    background-color: rgba(255,255,255,0.92);
+    font-size: 0.88rem;
+}
+
+.navbar .input-group .form-control:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.3);
+}
+
+.navbar .input-group .btn {
+    border: none;
+    background-color: rgba(255,255,255,0.92);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    transition: background-color 0.15s;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(82,183,136,0.08);
+}
+
+/* ==================== PRODUCT CARD ==================== */
+.product-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-radius: var(--radius) !important;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg) !important;
+}
+
+.product-card img {
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.08);
+}
+
+.add-cart-btn {
+    transition: all 0.2s ease;
+    font-size: 0.82rem;
+}
+
+.add-cart-btn:hover {
+    background-color: #e55a27 !important;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+}
+
+/* ==================== CATEGORY CARD ==================== */
+.category-card {
+    transition: all 0.25s ease;
+    cursor: pointer;
+    border-radius: var(--radius) !important;
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md) !important;
+    background-color: rgba(82,183,136,0.06) !important;
+}
+
+/* ==================== HERO BANNER ==================== */
+.hero-banner {
+    min-height: 380px;
+    position: relative;
+}
+
+.hero-banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to top, var(--bg-light), transparent);
+}
+
+/* ==================== BUTTONS ==================== */
+.btn {
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary-custom {
+    background-color: var(--primary);
+    color: #fff;
+    border: none;
+}
+
+.btn-primary-custom:hover {
+    background-color: #245a42;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(45,106,79,0.3);
+}
+
+.btn-accent {
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+}
+
+.btn-accent:hover {
+    background-color: #e55a27;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+}
+
+/* ==================== CARDS ==================== */
+.card {
+    border-radius: var(--radius) !important;
+    border: none;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+/* ==================== ALERT ==================== */
+.alert {
+    border-radius: var(--radius-sm);
+    border: none;
+    font-size: 0.9rem;
+}
+
+.alert-danger {
+    background-color: rgba(220,53,69,0.08);
+    border-left: 4px solid #dc3545;
+    color: #9b2335;
+}
+
+.alert-success {
+    background-color: rgba(82,183,136,0.1);
+    border-left: 4px solid var(--secondary);
+    color: #1a5e3a;
+}
+
+.alert-warning {
+    background-color: rgba(247,178,103,0.15);
+    border-left: 4px solid var(--warm);
+    color: #8a5a1e;
+}
+
+/* ==================== TABLE ==================== */
+.table > :not(caption) > * > * {
+    padding: 0.85rem 0.65rem;
+    vertical-align: middle;
+}
+
+.table thead th {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+/* ==================== FORM ==================== */
+.form-control, .form-select {
+    border-radius: var(--radius-sm);
+    border: 1.5px solid #e2e8f0;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.15);
+}
+
+.form-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+}
+
+/* ==================== BADGE ==================== */
+.badge {
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+/* ==================== PAGINATION ==================== */
+.page-link {
+    color: var(--primary);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px !important;
+    margin: 0 2px;
+    font-weight: 500;
+    font-size: 0.88rem;
+}
+
+.page-link:hover {
+    color: #fff;
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+/* ==================== FOOTER ==================== */
+footer {
+    border-top: 3px solid var(--secondary);
+}
+
+footer a {
+    transition: all 0.2s;
+}
+
+footer a:hover {
+    color: rgba(255, 255, 255, 1) !important;
+    text-decoration: none !important;
+    padding-left: 4px;
+}
+
+/* ==================== SECTION HEADERS ==================== */
+.section-bar {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    .hero-banner h1 {
+        font-size: 1.75rem;
+    }
+
+    .hero-banner .col-lg-6:last-child {
+        display: none;
+    }
+
+    .navbar .nav-link {
+        padding: 0.6rem 0.5rem !important;
+    }
+
+    .product-card:hover {
+        transform: translateY(-3px);
+    }
+}
+
+@media (max-width: 576px) {
+    .card-body {
+        padding: 0.85rem !important;
+    }
+}
+
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--soft);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b88c64;
+}
+
+/* ==================== ANIMATION ==================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.35s ease;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ==================== UTILITY ==================== */
+.text-primary-custom { color: var(--primary) !important; }
+.text-accent { color: var(--accent) !important; }
+.text-secondary-custom { color: var(--secondary) !important; }
+.bg-soft { background-color: rgba(82,183,136,0.06); }
+.bg-warm { background-color: rgba(247,178,103,0.08); }
